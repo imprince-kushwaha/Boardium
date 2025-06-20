@@ -1,0 +1,17 @@
+@import "tailwindcss";
+/* font-family: 'Lazer84'; */
+.p-button {
+  padding: 0.2rem;
+}
+
+/* Target the logout menu item text specifically */
+.p-tieredmenu .logout-item .p-menuitem-text {
+  color: red !important;
+}
+
+/* (Optional) Also color the logout icon red */
+.p-tieredmenu .logout-item .p-menuitem-icon {
+  color: red !important;
+}
+
+
