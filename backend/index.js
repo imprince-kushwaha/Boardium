@@ -1,5 +1,7 @@
-// Import Routes here
+const registerRoutes=require('./src/routes/register.routes')
+const loginRoutes=require('./src/routes/login.routes')
 
-module.exports=(app)=>{
-
+module.exports = (app) => {
+  app.use("/register", registerRoutes);
+  app.use("/login", loginRoutes);
 };
