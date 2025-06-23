@@ -1,0 +1,137 @@
+const onDragEnd = async (result) => {
+  const { source, destination } = result;
+  if (!destination) return;
+
+  const sourceCol = data.columns[source.droppableId];
+  const destCol = data.columns[destination.droppableId];
+  const sourceTasks = [...sourceCol.tasks];
+  const [movedTask] = sourceTasks.splice(source.index, 1);
+
+  if (source.droppableId === destination.droppableId) {
+    sourceTasks.splice(destination.index, 0, movedTask);
+    const newCol = {
+      ...sourceCol,
+      tasks: sourceTasks,
+    };
+    setData({
+      ...data,
+      columns: {
+        ...data.columns,
+        [newCol.id]: newCol,
+      },
+    });
+  } else {
+    const destTasks = [...destCol.tasks];
+    destTasks.splice(destination.index, 0, movedTask);
+
+    // Update frontend state
+    setData({
+      ...data,
+      columns: {
+        ...data.columns,
+        [sourceCol.id]: { ...sourceCol, tasks: sourceTasks },
+        [destCol.id]: { ...destCol, tasks: destTasks },
+      },
+    });
+
+    // 🔁 Notify backend of the change
+    try {
+      await fetch(`http://localhost:3000/tasks/${movedTask.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status: destination.droppableId }),
+      });
+    } catch (error) {
+      console.error("Failed to update task status", error);
+    }
+  }
+};
+
+ Backend Code to Handle Status Update
+// PUT /tasks/:id
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const task = await Task.findByPk(id);
+    if (!task) return res.status(404).json({ error: "Task not found" });
+
+    await task.update({ status }); // ✅ this saves the new column
+    res.json(task);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+// MAY load all tasks from the backend like this:
+useEffect(() => {
+  fetch("http://localhost:3000/tasks")
+    .then((res) => res.json())
+    .then((tasks) => {
+      const columns = {
+        todo: { ...initialData.columns.todo, tasks: [] },
+        inProgress: { ...initialData.columns.inProgress, tasks: [] },
+        done: { ...initialData.columns.done, tasks: [] },
+      };
+
+      tasks.forEach((task) => {
+        columns[task.status]?.tasks.push(task);
+      });
+
+      setData({ columns });
+    });
+}, []);
+
+
+// routes/tasks.js
+const express = require("express");
+const router = express.Router();
+const Task = require("../models/Task");
+
+// Get all tasks
+router.get("/", async (req, res) => {
+  const tasks = await Task.findAll();
+  res.json(tasks);
+});
+
+// Create new task
+router.post("/", async (req, res) => {
+  const { title, description, icon, status } = req.body;
+  try {
+    const task = await Task.create({ title, description, icon, status });
+    res.status(201).json(task);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Update task
+router.put("/:id", async (req, res) => {
+  const { id } = req.params;
+  const { title, description, icon, status } = req.body;
+  try {
+    const task = await Task.findByPk(id);
+    if (!task) return res.status(404).json({ error: "Task not found" });
+
+    await task.update({ title, description, icon, status });
+    res.json(task);
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+// Delete task
+router.delete("/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const task = await Task.findByPk(id);
+    if (!task) return res.status(404).json({ error: "Task not found" });
+
+    await task.destroy();
+    res.json({ message: "Task deleted" });
+  } catch (err) {
+    res.status(400).json({ error: err.message });
+  }
+});
+
+module.exports = router;
