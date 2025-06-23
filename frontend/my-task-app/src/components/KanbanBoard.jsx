@@ -199,7 +199,6 @@
 // }
 
 
-
 // DragDropContext: Wraps everything, listens to drag events.
 // Droppable: Defines a droppable area (e.g., column).
 // Draggable: Makes a task draggable.
@@ -210,6 +209,7 @@ import { Card, CardContent } from "./Card";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
+import { InputTextarea } from "primereact/inputtextarea";
 
 const initialData = {
   columns: {
@@ -251,8 +251,13 @@ export default function KanbanBoard() {
   const [data, setData] = useState(initialData);
   const [deleteDialogVisible, setDeleteDialogVisible] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState(null);
-  const [newTask, setNewTask] = useState({ title: "", icon: "" });
   const [activeColumnId, setActiveColumnId] = useState(null);
+  const [addDialogVisible, setAddDialogVisible] = useState(false);
+  const [newTask, setNewTask] = useState({
+    title: "",
+    description: "",
+    icon: "",
+  });
 
   const onDragEnd = (result) => {
     const { source, destination } = result;
@@ -309,19 +314,46 @@ export default function KanbanBoard() {
     setDeleteDialogVisible(false);
   };
 
+  // const addTask = (columnId) => {
+  //   if (!newTask.title) return;
+  //   const taskId = `task-${Date.now()}`;
+  //   const newTaskObj = {
+  //     id: taskId,
+  //     title: newTask.title,
+  //     icon: newTask.icon || "📌",
+  //   };
+  //   const column = data.columns[columnId];
+  //   const updatedColumn = {
+  //     ...column,
+  //     tasks: [...column.tasks, newTaskObj],
+  //   };
+  //   setData({
+  //     ...data,
+  //     columns: {
+  //       ...data.columns,
+  //       [columnId]: updatedColumn,
+  //     },
+  //   });
+  //   setNewTask({ title: "", icon: "" });
+  //   setActiveColumnId(null);
+  // };
   const addTask = (columnId) => {
     if (!newTask.title) return;
     const taskId = `task-${Date.now()}`;
+    console.log(taskId,"taskId")
     const newTaskObj = {
       id: taskId,
       title: newTask.title,
+      description: newTask.description || "",
       icon: newTask.icon || "📌",
     };
+
     const column = data.columns[columnId];
     const updatedColumn = {
       ...column,
       tasks: [...column.tasks, newTaskObj],
     };
+
     setData({
       ...data,
       columns: {
@@ -329,12 +361,14 @@ export default function KanbanBoard() {
         [columnId]: updatedColumn,
       },
     });
-    setNewTask({ title: "", icon: "" });
-    setActiveColumnId(null);
+
+    setNewTask({ title: "", description: "", icon: "" });
+    setAddDialogVisible(false);
   };
 
   return (
-    <div className="w-screen overflow-x-auto p-4">
+    <div className="pt-4">
+      {/* w-screen overflow-x-auto p-4 */}
       <DragDropContext onDragEnd={onDragEnd}>
         <div className="flex gap-4 w-full min-w-full">
           {Object.values(data.columns).map((column) => (
@@ -353,19 +387,14 @@ export default function KanbanBoard() {
                         </span>
                       </span>
                       <Button
-                        icon={
-                          activeColumnId === column.id
-                            ? "pi pi-times"
-                            : "pi pi-plus"
-                        }
+                        icon="pi pi-plus"
                         rounded
                         text
                         aria-label="Add"
-                        onClick={() =>
-                          setActiveColumnId((prev) =>
-                            prev === column.id ? null : column.id
-                          )
-                        }
+                        onClick={() => {
+                          setActiveColumnId(column.id);
+                          setAddDialogVisible(true);
+                        }}
                       />
                     </h2>
                   </div>
@@ -390,11 +419,18 @@ export default function KanbanBoard() {
                             className="relative bg-white rounded-lg shadow-sm border border-gray-200"
                           >
                             <CardContent className="p-3 flex items-center gap-2 justify-between cursor-grab">
-                              <span className="flex items-center gap-2">
-                                <span className="text-xl">{task.icon}</span>
-                                <span className="text-sm text-gray-700 font-medium">
-                                  {task.title}
+                              <span className="flex flex-col">
+                                <span className="flex items-center gap-2">
+                                  <span className="text-xl">{task.icon}</span>
+                                  <span className="text-sm text-gray-700 font-medium">
+                                    {task.title}
+                                  </span>
                                 </span>
+                                {task.description && (
+                                  <span className="text-xs text-gray-500 ml-7">
+                                    {task.description}
+                                  </span>
+                                )}
                               </span>
                               <Button
                                 icon="pi pi-trash"
@@ -414,7 +450,7 @@ export default function KanbanBoard() {
 
                     {provided.placeholder}
 
-                    {activeColumnId === column.id && (
+                    {/* {activeColumnId === column.id && (
                       <div className="flex flex-col gap-2 mt-2">
                         <InputText
                           value={newTask.title}
@@ -444,7 +480,7 @@ export default function KanbanBoard() {
                           />
                         </div>
                       </div>
-                    )}
+                    )} */}
                   </div>
                 </div>
               )}
@@ -452,6 +488,49 @@ export default function KanbanBoard() {
           ))}
         </div>
       </DragDropContext>
+
+      <Dialog
+        header="Add New Task"
+        visible={addDialogVisible}
+        style={{ width: "450px" }}
+        onHide={() => setAddDialogVisible(false)}
+        footer={
+          <div className="flex justify-end gap-2">
+            <Button
+              label="Cancel"
+              icon="pi pi-times"
+              className="p-button-text"
+              onClick={() => setAddDialogVisible(false)}
+            />
+            <Button
+              label="Add Task"
+              icon="pi pi-check"
+              onClick={() => addTask(activeColumnId)}
+              autoFocus
+            />
+          </div>
+        }
+      >
+        <div className="flex flex-col gap-3">
+          <InputText
+            value={newTask.title}
+            onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
+            placeholder="Task Title"
+          />
+          <InputTextarea
+            value={newTask.description}
+            onChange={(e) =>
+              setNewTask({ ...newTask, description: e.target.value })
+            }
+            placeholder="Task Description"
+          />
+          <InputText
+            value={newTask.icon}
+            onChange={(e) => setNewTask({ ...newTask, icon: e.target.value })}
+            placeholder="Icon (e.g., 📝)"
+          />
+        </div>
+      </Dialog>
 
       <Dialog
         header="Confirm Delete"

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
 import Footer from "./Footer";
+import KanbanBoard from "../components/KanbanBoard";
 
 const AllTasks = () => {
   const [search, setSearch] = useState("");
@@ -37,6 +38,9 @@ const AllTasks = () => {
         </div>
         {/* Here the content should be scrollable */}
       </div>
+        {/* <div className="ml-20 sm:ml-60">
+        <KanbanBoard/>
+        </div> */}
       <Footer/>
     </>
   );
