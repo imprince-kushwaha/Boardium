@@ -1,8 +1,8 @@
 @import "tailwindcss";
 /* font-family: 'Lazer84'; */
-.p-button {
+/* .p-button {
   padding: 0.2rem;
-}
+} */
 
 /* Target the logout menu item text specifically */
 .p-tieredmenu .logout-item .p-menuitem-text {
