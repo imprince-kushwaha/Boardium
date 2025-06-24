@@ -12,7 +12,7 @@ router.post("/", async(req, res) => {
     throw new Error("Password is required!!!");
   }
   try {
-    const existingUser=await Register.findOne({where:name, emailId, password});
+    const existingUser=await Register.findOne({where:{name, emailId, password}});
     if (existingUser) {
       return res.status(400).send("Profile with the same details already exists...");
     }

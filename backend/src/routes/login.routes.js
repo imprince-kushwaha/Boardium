@@ -16,3 +16,5 @@ router.get('/',async(req,res)=>{
         res.status(400).send("Error User not Found: "+err.message)
     }
 })
+
+module.exports=router;
