@@ -3,16 +3,31 @@ import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { FloatLabel } from "primereact/floatlabel";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit=async(e)=>{
+    e.preventDefault();
+    try {
+      const {data}=await axios.post("http://localhost:5001/login",{emailId:email,password})
+      console.log("data",data)
+      localStorage.setItem('token',data.token)
+      navigate('/home')
+    } catch (err) {
+      alert('Wrong details')
+    }
+  }
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
     <div className="w-full max-w-md bg-white p-8 rounded-2xl shadow-md">
       <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
-      <form className="space-y-6">
+      <form className="space-y-6" onSubmit={handleSubmit}>
         {/* Email */}
         <div>
           <FloatLabel>
@@ -53,7 +68,7 @@ const Login = () => {
       {/* Toggle to Login */}
       <p className="text-sm mt-6 text-center">
          Don't have an account?{" "}
-        <button type="button" className="text-blue-600 hover:underline cursor-pointer">
+        <button type="button" className="text-blue-600 hover:underline cursor-pointer" onClick={()=>navigate('/register')}>
           Register
         </button>
       </p>

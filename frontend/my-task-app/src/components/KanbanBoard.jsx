@@ -212,6 +212,7 @@ import { InputTextarea } from "primereact/inputtextarea";
 import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import EmojiPicker from "emoji-picker-react";
+import axios from "axios";
 
 // const initialData = {
 //   columns: {
@@ -295,8 +296,9 @@ export default function KanbanBoard() {
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const res = await fetch("http://localhost:5001/task");
-        const tasks = await res.json();
+        const res = await axios.get("http://localhost:5001/task");
+        console.log("res",res)
+        const tasks = res.data;
 
         const grouped = {
           todo: [],
@@ -390,12 +392,9 @@ export default function KanbanBoard() {
       const destTasks = [...destCol.tasks];
       movedTask.status = destCol.id; // update task status
 
-      // 🔁 Send PATCH to backend to update status
       try {
-        await fetch(`http://localhost:5001/task/${movedTask.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ status: destCol.id }), // 👈 This is what updates the task
+        await axios.put(`http://localhost:5001/task/${movedTask.id}`, {
+          status: destCol.id, // This is what updates the task
         });
       } catch (error) {
         console.error("Failed to update task status:", error);
@@ -482,15 +481,8 @@ export default function KanbanBoard() {
     };
 
     try {
-      const response = await fetch("http://localhost:5001/task", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(taskData),
-      });
-
-      const savedTask = await response.json();
+      const response =await axios.post("http://localhost:5001/task", taskData);
+      const savedTask = await response.data;
 
       // Add backend task to state
       const column = data.columns[columnId];
@@ -530,7 +522,7 @@ export default function KanbanBoard() {
             <Droppable droppableId={column.id} key={column.id}>
               {(provided) => (
                 <div
-                  className={`w-full min-w-[18rem] rounded-lg shadow-md ${column.color} flex flex-col h-[calc(100vh-5rem)]`}
+                  className={`w-full min-w-[18rem] rounded-lg shadow-md ${column.color} flex flex-col h-[calc(100vh-12.5rem)]`}
                 >
                   {/* Sticky Header */}
                   <div className="sticky top-0 z-10 bg-inherit p-3 border-b">
@@ -589,13 +581,13 @@ export default function KanbanBoard() {
                             <CardContent className="p-3 flex items-center gap-2 justify-between cursor-grab">
                               <span className="flex flex-col">
                                 <span className="flex items-center gap-2">
-                                  <span className="text-xl">{task.icon}</span>
-                                  <span className="text-sm text-gray-700 font-medium">
+                                  <span className="text-2xl">{task.icon}</span>
+                                  <span className="text-base text-gray-700 font-medium">
                                     {task.title}
                                   </span>
                                 </span>
                                 {task.description && (
-                                  <span className="text-xs text-gray-500 ml-7">
+                                  <span className="text-sm text-gray-500 ml-7">
                                     {task.description}
                                   </span>
                                 )}
