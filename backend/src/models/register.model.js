@@ -1,7 +1,8 @@
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db/database.js");
 
-const Register = sequelize.define("Register",
+const Register = sequelize.define(
+  "Register",
   {
     // Model attributes here;
     name: {
@@ -19,6 +20,14 @@ const Register = sequelize.define("Register",
     password: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    role: {
+      type: DataTypes.ENUM("user", "admin", "superadmin"),
+      defaultValue: "user", // Prevents users from registering as admin/superadmin
+    },
+    active: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true,
     },
   },
   { timestamps: true }
