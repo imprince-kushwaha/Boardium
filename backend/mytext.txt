@@ -135,3 +135,30 @@ router.delete("/:id", async (req, res) => {
 });
 
 module.exports = router;
+
+
+
+
+
+const createAdmin = async (req, res) => {
+  const currentUser = req.user; // Assume you use JWT or session to identify current user
+
+  if (currentUser.role !== "superadmin") {
+    return res.status(403).json({ message: "Access denied" });
+  }
+
+  const { name, emailId, password, role } = req.body;
+
+  if (!["admin", "superadmin"].includes(role)) {
+    return res.status(400).json({ message: "Invalid role" });
+  }
+
+  const newAdmin = await Register.create({
+    name,
+    emailId,
+    password,
+    role,
+  });
+
+  res.status(201).json({ message: `${role} created`, user: newAdmin });
+};

@@ -14,3 +14,4 @@ Register.belongsToMany(Project, {
   as: "assignedProjects", // user.assignedProjects
   foreignKey: "registerId",
 });
+module.exports = { Project, Register, ProjectAssignment };

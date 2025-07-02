@@ -43,15 +43,13 @@
 
 // module.exports = Task;
 
-
-
-
-
 const { DataTypes } = require("sequelize");
 const sequelize = require("../db/database.js");
-const Register = require("./register.model.js");// for association
+const Register = require("./register.model.js"); // for association
+const Project = require("./project.model.js");
 
-const Task = sequelize.define("Task",
+const Task = sequelize.define(
+  "Task",
   {
     title: {
       type: DataTypes.STRING,
@@ -99,6 +97,15 @@ const Task = sequelize.define("Task",
       allowNull: true,
       references: {
         model: Register,
+        key: "id",
+      },
+    },
+
+    projectId: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+      references: {
+        model: Project,
         key: "id",
       },
     },
