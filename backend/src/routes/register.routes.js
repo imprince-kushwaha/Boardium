@@ -25,7 +25,7 @@ router.post("/", async(req, res) => {
       name,
       emailId,
       password: hashedPassword,
-      role: "user", // Always default for public registration
+      role: 3, // Always default for public registration
     });
      res.status(201).json(register);
   } catch (err) {
