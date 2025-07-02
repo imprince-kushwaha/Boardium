@@ -279,6 +279,10 @@ export default function KanbanBoard() {
   const [taskToDelete, setTaskToDelete] = useState(null);
   const [activeColumnId, setActiveColumnId] = useState(null);
   const [addDialogVisible, setAddDialogVisible] = useState(false);
+
+  const [users, setUsers] = useState([]);
+  const [assignedTo, setAssignedTo] = useState(null);
+
   const [newTask, setNewTask] = useState({
     title: "",
     description: "",
@@ -292,12 +296,18 @@ export default function KanbanBoard() {
     { label: "Medium", value: 2 },
     { label: "Low", value: 3 },
   ];
+  const role = localStorage.getItem("role"); // <-- add this line at the top
+
 
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const res = await axios.get("http://localhost:5001/task");
-        console.log("res",res)
+        const userId = localStorage.getItem("userId");
+        const res = await axios.get(
+          `http://localhost:5001/task?createdBy=${userId}`
+        );
+        // const res = await axios.get("http://localhost:5001/task");
+        console.log("res", res);
         const tasks = res.data;
 
         const grouped = {
@@ -327,7 +337,17 @@ export default function KanbanBoard() {
       }
     };
 
+    const fetchUsers = async () => {
+      try {
+        const res = await axios.get("http://localhost:5001/login/users");
+        setUsers(res.data); // Should return list of users
+      } catch (error) {
+        console.error("Failed to fetch users:", error);
+      }
+    };
+
     fetchTasks();
+    fetchUsers();
   }, []);
 
   // const onDragEnd = (result) => {
@@ -417,18 +437,26 @@ export default function KanbanBoard() {
     setDeleteDialogVisible(true);
   };
 
-  const deleteTask = () => {
+  const deleteTask = async () => {
     const { columnId, taskId } = taskToDelete;
-    const column = data.columns[columnId];
-    const newTasks = column.tasks.filter((t) => t.id !== taskId);
-    setData({
-      ...data,
-      columns: {
-        ...data.columns,
-        [columnId]: { ...column, tasks: newTasks },
-      },
-    });
-    setDeleteDialogVisible(false);
+
+    try {
+      await axios.delete(`http://localhost:5001/task/${taskId}`);
+
+      const column = data.columns[columnId];
+      const newTasks = column.tasks.filter((t) => t.id !== taskId);
+
+      setData({
+        ...data,
+        columns: {
+          ...data.columns,
+          [columnId]: { ...column, tasks: newTasks },
+        },
+      });
+      setDeleteDialogVisible(false);
+    } catch (error) {
+      console.error("Failed to delete task:", error);
+    }
   };
 
   // const addTask = (columnId) => {
@@ -470,6 +498,8 @@ export default function KanbanBoard() {
 
   const addTask = async (columnId) => {
     if (!newTask.title) return;
+    // if (!newTask.title || !assignedTo) return;
+    const createdBy = parseInt(localStorage.getItem("userId")); // set this after login
 
     const taskData = {
       title: newTask.title,
@@ -478,10 +508,12 @@ export default function KanbanBoard() {
       priority: newTask.priority,
       date: newTask.date ? newTask.date.toISOString().split("T")[0] : null,
       status: "todo", // always starts in "todo"
+      createdBy,
+      assignedTo,
     };
 
     try {
-      const response =await axios.post("http://localhost:5001/task", taskData);
+      const response = await axios.post("http://localhost:5001/task", taskData);
       const savedTask = await response.data;
 
       // Add backend task to state
@@ -508,8 +540,8 @@ export default function KanbanBoard() {
         date: null,
       });
       setAddDialogVisible(false);
-    } catch (error) {
-      console.error("Failed to add task:", error);
+    } catch (err) {
+      console.error("Failed to add task:", err.response?.data || err.message);
     }
   };
 
@@ -646,7 +678,7 @@ export default function KanbanBoard() {
           </div>
         }
       >
-        <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3 m-1">
           <InputText
             value={newTask.title}
             onChange={(e) => setNewTask({ ...newTask, title: e.target.value })}
@@ -701,6 +733,17 @@ export default function KanbanBoard() {
             onChange={(e) => setNewTask({ ...newTask, priority: e.value })}
             placeholder="Select Priority"
           />
+          {role == 1 && (
+            <Dropdown
+              value={assignedTo}
+              onChange={(e) => setAssignedTo(e.value)}
+              options={users.map((user) => ({
+                label: user.name,
+                value: user.id,
+              }))}
+              placeholder="Assign To"
+            />
+          )}
           <Calendar
             value={newTask.date}
             onChange={(e) => setNewTask({ ...newTask, date: e.value })}

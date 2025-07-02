@@ -16,6 +16,8 @@ import Sidebar from "./pages/Sidebar";
 import UserMainPage from "./components/User/UserMainPage";
 import AddProject from "./components/Admin/AddProject";
 import UserManagement from "./components/Admin/UserManagement";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   return (
@@ -23,21 +25,12 @@ function App() {
       {/* <KanbanBoard /> */}
       {/* <Kendo/>  */}
 
-      {/* <Header />
-      <Sidebar /> */}
       {/* <MainPage/> */}
-      {/* main page */}
+      
       {/* <UserMainPage/> */}
 
       {/* <AllTasks/> */}
       {/* <AddProject/> */}
-
-      {/* <Router>
-        <Routes>
-          <Route path="/register" element={<Register/>}/>
-          <Route path="/login" element={<Login/>}/>
-        </Routes>
-      </Router> */}
 
       <Router>
         <Routes>
@@ -46,9 +39,10 @@ function App() {
           <Route path="/home" element={<UserMainPage />} />
           <Route path="/projects" element={<AddProject />} />
           <Route path="/team" element={<UserManagement />} />
-          {/* {/* <Route path="/" element={<Navigate to="/login" />} />  */}
+          <Route path="/" element={<Navigate to="/login" />} /> 
         </Routes>
       </Router>
+      <ToastContainer position="top-right"/>
     </>
   );
 }
