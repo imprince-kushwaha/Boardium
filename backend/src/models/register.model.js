@@ -21,9 +21,21 @@ const Register = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    // role: {
+    //   type: DataTypes.ENUM("user", "admin", "superadmin"),
+    //   defaultValue: "user", // Prevents users from registering as admin/superadmin
+    // },
+
+    // Best way to do is on basis of user instead of role (for future use)
+
     role: {
-      type: DataTypes.ENUM("user", "admin", "superadmin"),
-      defaultValue: "user", // Prevents users from registering as admin/superadmin
+      type: DataTypes.INTEGER,
+      defaultValue: 3,
+      validate: {
+        min: 1,
+        max: 3,
+      },
+      comment: "1 = Superadmin, 2 = Admin, 3 = User",
     },
     active: {
       type: DataTypes.BOOLEAN,

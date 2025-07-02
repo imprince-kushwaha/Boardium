@@ -13,13 +13,13 @@ const Register = require("./src/models/register.model");
       process.exit(0);
     }
 
-    const hashedPassword = await bcrypt.hash("supersecurepassword2", 10);
+    const hashedPassword = await bcrypt.hash("superadmin", 10);
 
     const superadmin = await Register.create({
-      name: "SuperAdmin2",
-      emailId: "superadmin2@example.com",
+      name: "SuperAdmin",
+      emailId: "superadmin@gmail.com",
       password: hashedPassword,
-      role: "superadmin",
+      role: 1,
     });
 
     console.log("✅ Superadmin created successfully:");
