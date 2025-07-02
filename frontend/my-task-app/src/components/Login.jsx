@@ -22,10 +22,10 @@ const Login = () => {
       if (!data) {
         toast.error("Login failed!");
       }
-      console.log("data", data);
       localStorage.setItem("token", data.token);
       localStorage.setItem("userId", data.user.id);
       localStorage.setItem("role", data.user.role);
+      localStorage.setItem("username", data.user.name);
       navigate("/home");
     } catch (err) {
       if (err.response?.status === 401) {

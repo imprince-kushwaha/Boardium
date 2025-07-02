@@ -39,6 +39,7 @@ function App() {
           <Route path="/home" element={<UserMainPage />} />
           <Route path="/projects" element={<AddProject />} />
           <Route path="/team" element={<UserManagement />} />
+          <Route path="/projects/kanban/:projectId" element={<KanbanBoard />} />
           <Route path="/" element={<Navigate to="/login" />} /> 
         </Routes>
       </Router>

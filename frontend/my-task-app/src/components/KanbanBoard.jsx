@@ -213,6 +213,8 @@ import { Dropdown } from "primereact/dropdown";
 import { Calendar } from "primereact/calendar";
 import EmojiPicker from "emoji-picker-react";
 import axios from "axios";
+import { MultiSelect } from "primereact/multiselect";
+import { useParams } from "react-router-dom";
 
 // const initialData = {
 //   columns: {
@@ -282,6 +284,7 @@ export default function KanbanBoard() {
 
   const [users, setUsers] = useState([]);
   const [assignedTo, setAssignedTo] = useState(null);
+  const role = localStorage.getItem("role"); // <-- add this line at the top
 
   const [newTask, setNewTask] = useState({
     title: "",
@@ -296,19 +299,69 @@ export default function KanbanBoard() {
     { label: "Medium", value: 2 },
     { label: "Low", value: 3 },
   ];
-  const role = localStorage.getItem("role"); // <-- add this line at the top
 
+    const { projectId } = useParams();
 
   useEffect(() => {
+    // const fetchTasks = async () => {
+    //   try {
+    //     const userId = localStorage.getItem("userId");
+    //     const res = await axios.get(
+    //       `http://localhost:5001/task?createdBy=${userId}`
+    //     );
+    //     // const res = await axios.get("http://localhost:5001/task");
+    //     console.log("res", res);
+    //     const tasks = res.data;
+
+    //     const grouped = {
+    //       todo: [],
+    //       inProgress: [],
+    //       done: [],
+    //     };
+
+    //     tasks.forEach((task) => {
+    //       if (grouped[task.status]) {
+    //         grouped[task.status].push(task);
+    //       }
+    //     });
+
+    //     setData({
+    //       columns: {
+    //         todo: { ...initialData.columns.todo, tasks: grouped.todo },
+    //         inProgress: {
+    //           ...initialData.columns.inProgress,
+    //           tasks: grouped.inProgress,
+    //         },
+    //         done: { ...initialData.columns.done, tasks: grouped.done },
+    //       },
+    //     });
+    //   } catch (error) {
+    //     console.error("Failed to fetch tasks:", error);
+    //   }
+    // };
+    const userId = localStorage.getItem("userId");
+
     const fetchTasks = async () => {
       try {
-        const userId = localStorage.getItem("userId");
-        const res = await axios.get(
-          `http://localhost:5001/task?createdBy=${userId}`
+        // const createdRes = await axios.get(
+        //   `http://localhost:5001/task?createdBy=${userId}`
+        // );
+        // const assignedRes = await axios.get(
+        //   `http://localhost:5001/task?assignedTo=${userId}`
+        // );
+        const createdRes = await axios.get(
+          `http://localhost:5001/task?createdBy=${userId}&projectId=${projectId}`
         );
-        // const res = await axios.get("http://localhost:5001/task");
-        console.log("res", res);
-        const tasks = res.data;
+        const assignedRes = await axios.get(
+          `http://localhost:5001/task?assignedTo=${userId}&projectId=${projectId}`
+        );
+
+        const createdTasks = createdRes.data;
+        const assignedTasks = assignedRes.data.filter(
+          (task) => task.createdBy !== parseInt(userId)
+        ); // avoid duplication
+
+        const allTasks = [...createdTasks, ...assignedTasks];
 
         const grouped = {
           todo: [],
@@ -316,7 +369,7 @@ export default function KanbanBoard() {
           done: [],
         };
 
-        tasks.forEach((task) => {
+        allTasks.forEach((task) => {
           if (grouped[task.status]) {
             grouped[task.status].push(task);
           }
@@ -500,6 +553,8 @@ export default function KanbanBoard() {
     if (!newTask.title) return;
     // if (!newTask.title || !assignedTo) return;
     const createdBy = parseInt(localStorage.getItem("userId")); // set this after login
+    // const assignedUsers=localStorage.setItem("assignedUsers",assignedTo)
+    const projectId = window.location.pathname.split("/").pop(); // Assuming route: /projects/kanban/:projectId
 
     const taskData = {
       title: newTask.title,
@@ -510,6 +565,7 @@ export default function KanbanBoard() {
       status: "todo", // always starts in "todo"
       createdBy,
       assignedTo,
+      ...(projectId ? { projectId }:{}), // ✅ only include if exists,
     };
 
     try {
@@ -734,14 +790,15 @@ export default function KanbanBoard() {
             placeholder="Select Priority"
           />
           {role == 1 && (
-            <Dropdown
+            <MultiSelect
               value={assignedTo}
               onChange={(e) => setAssignedTo(e.value)}
               options={users.map((user) => ({
                 label: user.name,
                 value: user.id,
               }))}
-              placeholder="Assign To"
+              placeholder="Assign to"
+              display="chip"
             />
           )}
           <Calendar
@@ -750,6 +807,7 @@ export default function KanbanBoard() {
             showIcon
             dateFormat="yy-mm-dd"
             placeholder="Select Due Date"
+            minDate={new Date()}
           />
         </div>
       </Dialog>

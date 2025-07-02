@@ -6,11 +6,12 @@ import CommonLayout from "../../pages/CommonLayout";
 import Footer from "../../pages/Footer";
 
 const UserMainPage = () => {
+  const UserName=localStorage.getItem("username")
   return (
     <>
       <CommonLayout>
         <div className="">
-          <div>Welcome back @User_Name</div>
+          <div>Welcome back {UserName} 👋</div>
           <KanbanBoard />
         </div>
       </CommonLayout>
