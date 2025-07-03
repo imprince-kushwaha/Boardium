@@ -538,7 +538,7 @@ const AddProject = () => {
   return (
     <>
       <CommonLayout>
-        <div className="min-h-[82vh]">
+        <div className="">
           <div className="flex justify-between items-center m-4">
             <h2 className="text-2xl font-semibold">Projects</h2>
             <Button
@@ -625,7 +625,6 @@ const AddProject = () => {
           </Dialog>
         </div>
       </CommonLayout>
-      <Footer />
     </>
   );
 };

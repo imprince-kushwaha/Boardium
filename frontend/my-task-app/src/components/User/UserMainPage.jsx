@@ -15,7 +15,6 @@ const UserMainPage = () => {
           <KanbanBoard />
         </div>
       </CommonLayout>
-      <Footer />
     </>
   );
 };

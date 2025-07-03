@@ -41,7 +41,6 @@ const AllTasks = () => {
         {/* <div className="ml-20 sm:ml-60">
         <KanbanBoard/>
         </div> */}
-      <Footer/>
     </>
   );
 };

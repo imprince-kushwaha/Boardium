@@ -753,7 +753,7 @@ const fetchTasks = async () => {
             <Droppable droppableId={column.id} key={column.id}>
               {(provided) => (
                 <div
-                  className={`w-full min-w-[18rem] rounded-lg shadow-md ${column.color} flex flex-col h-[calc(100vh-12.5rem)]`}
+                  className={`w-full min-w-[18rem] rounded-lg shadow-md ${column.color} flex flex-col h-[740px]`}
                 >
                   {/* Sticky Header */}
                   <div className="sticky top-0 z-10 bg-inherit p-3 border-b">

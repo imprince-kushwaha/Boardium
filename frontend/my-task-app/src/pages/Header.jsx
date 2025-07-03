@@ -2,10 +2,10 @@ import React, { useRef } from "react";
 import { IoMdSearch } from "react-icons/io";
 import { MdNotificationsActive } from "react-icons/md";
 import { TieredMenu } from "primereact/tieredmenu";
-import { useNavigate } from "react-router-dom"; // Add this import
-import "primereact/resources/themes/saga-blue/theme.css"; // Theme CSS
-import "primereact/resources/primereact.min.css"; // PrimeReact core CSS
-import "primeicons/primeicons.css"; // PrimeIcons CSS
+import { useNavigate } from "react-router-dom";
+import "primereact/resources/themes/saga-blue/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
 
 const Header = () => {
   const menu = useRef(null);
@@ -32,27 +32,57 @@ const Header = () => {
   ];
 
   return (
-    <header className="flex justify-between items-center sticky px-6 py-3 bg-white shadow-lg">
+    // <header className="flex justify-between items-center sticky top-0 px-6 py-4 bg-[#4fb6ed] text-white shadow-md z-50">
+    //   <div className="flex items-center">
+    //     <img
+    //       src="./src/assets/images/Logo.jpg"
+    //       alt="Boardium Logo"
+    //       className="h-12 w-auto object-contain"
+    //     />
+    //   </div>
+
+    //   <div className="flex items-center space-x-6">
+    //     {/* Search Box */}
+    //     {/* <div className="flex items-center border rounded-md px-3 py-1 w-72 bg-white text-gray-800">
+    //       <IoMdSearch className="text-gray-600 mr-2" />
+    //       <input
+    //         type="text"
+    //         placeholder="Search"
+    //         className="outline-none text-sm text-gray-600 w-full placeholder-gray-500"
+    //       />
+    //     </div> */}
+
+    //     {/* Profile and Notifications */}
+    //     <div className="flex items-center space-x-3">
+    //       <TieredMenu
+    //         model={items}
+    //         popup
+    //         ref={menu}
+    //         breakpoint="767px"
+    //         style={{ width: "160px" }}
+    //       />
+    //       <span
+    //         className="bg-[#00B4D8] text-white font-semibold px-3 py-1 rounded-full cursor-pointer"
+    //         onClick={(e) => menu.current.toggle(e)}
+    //       >
+    //         JP
+    //       </span>
+    //       <MdNotificationsActive className="text-2xl text-white" />
+    //     </div>
+    //   </div>
+    // </header>
+
+    <header className="flex justify-between items-center sticky top-0 px-8 py-5 bg-[#1E2A47] text-white shadow-lg z-50">
       <div className="flex items-center">
         <img
           src="./src/assets/images/Logo.jpg"
           alt="Boardium Logo"
-          className="h-10 w-auto object-contain"
+          className="h-12 w-auto object-contain"
         />
       </div>
 
       <div className="flex items-center space-x-6">
-        {/* space-x: Applies horizontal margin to elements within a container.Specifically, it adds margin-right to all elements except the last one. */}
-        <div className="flex items-center border rounded-md px-3 py-1 w-72">
-          <IoMdSearch className="text-gray-600 mr-2" />
-          <input
-            type="text"
-            placeholder="Search"
-            className="outline-none text-sm text-gray-600 w-40 placeholder-gray-500"
-          />
-        </div>
-
-        <div className="flex items-center space-x-3">
+        <div className="relative">
           <TieredMenu
             model={items}
             popup
@@ -61,13 +91,13 @@ const Header = () => {
             style={{ width: "160px" }}
           />
           <span
-            className="bg-blue-700 text-white font-semibold px-3 py-1 rounded-full cursor-pointer"
+            className="bg-[#00B4D8] text-white font-semibold px-3 py-1 rounded-full cursor-pointer"
             onClick={(e) => menu.current.toggle(e)}
           >
             JP
           </span>
-          <MdNotificationsActive className="text-2xl" />
         </div>
+        <MdNotificationsActive className="text-2xl text-white cursor-pointer hover:text-[#00B4D8]" />
       </div>
     </header>
   );
