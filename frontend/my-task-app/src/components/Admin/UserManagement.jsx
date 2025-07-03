@@ -26,7 +26,7 @@ const UserManagement = () => {
       );
       // setUsers(res.data);
 
-      const filteredUsers = res.data.filter((user) => user.role !== "superadmin");
+      const filteredUsers = res.data.filter((user) => user.role !== 1);
       setUsers(filteredUsers);
     } catch (err) {
       console.error("Error fetching users:", err.response?.data || err.message);
@@ -42,7 +42,7 @@ const UserManagement = () => {
         {},
         axiosConfig
       );
-      await fetchUsers(); // Refresh list
+      await fetchUsers();
     } catch (err) {
       console.error("Error toggling user:", err.response?.data || err.message);
     }
@@ -52,31 +52,25 @@ const UserManagement = () => {
     fetchUsers();
   }, []);
 
-  // Role tag template
+  // Role tag template (mapping integers to string labels)
   const roleTemplate = (rowData) => {
+    const roleMap = {
+      1: "Superadmin",
+      2: "Admin",
+      3: "User",
+    };
+
     const severity =
-      rowData.role === "superadmin"
-        ? "danger"
-        : rowData.role === "admin"
-        ? "warning"
-        : "info";
-    return <Tag value={rowData.role} severity={severity}></Tag>;
+      rowData.role === 1 ? "danger" : rowData.role === 2 ? "warning" : "info";
+
+    return <Tag value={roleMap[rowData.role]} severity={severity}></Tag>;
   };
 
   // Active toggle button template
   const activeTemplate = (rowData) => {
-    if (rowData.role !== "user") return <span>—</span>;
+    if (rowData.role === 1) return <span>—</span>; // Cannot toggle superadmin
 
     return (
-      // <ToggleButton
-      //   checked={rowData.active}
-      //   onLabel="Active"
-      //   offLabel="Inactive"
-      //   onIcon="pi pi-check"
-      //   offIcon="pi pi-times"
-      //   className="p-button-sm"
-      //   onChange={() => toggleUser(rowData.id)}
-      // />
       <InputSwitch
         checked={rowData.active}
         onChange={() => toggleUser(rowData.id)}

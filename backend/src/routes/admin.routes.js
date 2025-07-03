@@ -4,11 +4,12 @@ const Register = require("../models/register.model");
 const { verifyToken, checkRole } = require("../middlewares/auth.middleware");
 const router = express.Router();
 
-// Only accessible by superadmin
-router.post("/create", verifyToken, checkRole("superadmin"), async (req, res) => {
+router.post("/create", verifyToken, checkRole(1), async (req, res) => {
+  // checkRole("superadmin")
   const { name, emailId, password, role } = req.body;
 
-  if (!["admin", "superadmin"].includes(role)) {
+  // if (![1, 2].includes(role)) {
+  if (role !== 1 && role !== 2) {
     return res.status(400).json({ message: "Invalid role" });
   }
 
@@ -24,13 +25,13 @@ router.post("/create", verifyToken, checkRole("superadmin"), async (req, res) =>
       role,
     });
 
-    res.status(201).json({ message: `${role} created`, user: newAdmin });
+    res.status(201).json({ message: `User with role ${role} created`, user: newAdmin });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-router.get("/users", verifyToken, checkRole("superadmin"), async (req, res) => {
+router.get("/users", verifyToken, checkRole(1), async (req, res) => {
   try {
     const users = await Register.findAll({
       attributes: ["id", "name", "emailId", "role", "active"],
@@ -41,16 +42,16 @@ router.get("/users", verifyToken, checkRole("superadmin"), async (req, res) => {
   }
 });
 
-
-router.patch("/toggle/:id", verifyToken, checkRole("superadmin"), async (req, res) => {
+// Toggle user active status (only for users)
+router.patch("/toggle/:id", verifyToken, checkRole(1), async (req, res) => {
   const userId = req.params.id;
 
   try {
     const user = await Register.findByPk(userId);
 
     if (!user) return res.status(404).json({ message: "User not found" });
-    if (user.role !== "user") {
-      return res.status(403).json({ message: "Can only toggle normal users" });
+    if (user.role === 1) {
+      return res.status(403).json({ message: "Cannot toggle superadmin status" });
     }
 
     user.active = !user.active;
@@ -69,6 +70,5 @@ router.patch("/toggle/:id", verifyToken, checkRole("superadmin"), async (req, re
     res.status(500).json({ error: err.message });
   }
 });
-
 
 module.exports = router;
