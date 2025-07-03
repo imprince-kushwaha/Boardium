@@ -458,6 +458,7 @@ const AddProject = () => {
       const res = await axios.get(
         `http://localhost:5001/project/${userId}`
       );
+      console.log("res",res)
       const { myProjects, sharedProjects } = res.data;
 
       setMyProjects(myProjects);

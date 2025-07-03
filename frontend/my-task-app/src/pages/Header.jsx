@@ -2,22 +2,20 @@ import React, { useRef } from "react";
 import { IoMdSearch } from "react-icons/io";
 import { MdNotificationsActive } from "react-icons/md";
 import { TieredMenu } from "primereact/tieredmenu";
-import { PrimeReactProvider, PrimeReactContext } from "primereact/api";
+import { useNavigate } from "react-router-dom"; // Add this import
 import "primereact/resources/themes/saga-blue/theme.css"; // Theme CSS
 import "primereact/resources/primereact.min.css"; // PrimeReact core CSS
 import "primeicons/primeicons.css"; // PrimeIcons CSS
 
 const Header = () => {
   const menu = useRef(null);
+  const navigate = useNavigate();
 
   const items = [
     {
-      label: "Search",
-      icon: "pi pi-search",
-    },
-    {
       label: "Settings",
       icon: "pi pi-cog",
+      command: () => navigate("/settings"),
     },
     {
       separator: true,
@@ -25,7 +23,11 @@ const Header = () => {
     {
       label: "Logout",
       icon: "pi pi-sign-out",
-      className: "logout-item", // Add custom class here
+      className: "logout-item",
+      command: () => {
+        localStorage.clear();
+        navigate("/login");
+      },
     },
   ];
 
@@ -64,7 +66,7 @@ const Header = () => {
           >
             JP
           </span>
-          <MdNotificationsActive className="text-xl" />
+          <MdNotificationsActive className="text-2xl" />
         </div>
       </div>
     </header>

@@ -18,6 +18,7 @@ import AddProject from "./components/Admin/AddProject";
 import UserManagement from "./components/Admin/UserManagement";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import MySettings from "./pages/MySettings";
 
 function App() {
   return (
@@ -40,6 +41,7 @@ function App() {
           <Route path="/projects" element={<AddProject />} />
           <Route path="/team" element={<UserManagement />} />
           <Route path="/projects/kanban/:projectId" element={<KanbanBoard />} />
+          <Route path="/settings" element={<MySettings />} />
           <Route path="/" element={<Navigate to="/login" />} /> 
         </Routes>
       </Router>

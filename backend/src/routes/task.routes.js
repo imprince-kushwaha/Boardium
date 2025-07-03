@@ -104,7 +104,9 @@ router.get("/", async (req, res) => {
   let whereClause = {};
   if (createdBy) whereClause.createdBy = createdBy;
   if (assignedTo) whereClause.assignedTo = assignedTo;
-  if (projectId) whereClause.projectId = projectId;
+  // if (projectId) whereClause.projectId = projectId;
+  if (projectId) whereClause.projectId = projectId === "null" ? null : projectId;
+
   //  if (projectId === "null") {
   //   whereClause.projectId = null;
   // } else if (projectId) {

@@ -300,7 +300,7 @@ export default function KanbanBoard() {
     { label: "Low", value: 3 },
   ];
 
-    const { projectId } = useParams();
+  const { projectId } = useParams();
 
   useEffect(() => {
     // const fetchTasks = async () => {
@@ -341,54 +341,191 @@ export default function KanbanBoard() {
     // };
     const userId = localStorage.getItem("userId");
 
-    const fetchTasks = async () => {
-      try {
-        // const createdRes = await axios.get(
-        //   `http://localhost:5001/task?createdBy=${userId}`
-        // );
-        // const assignedRes = await axios.get(
-        //   `http://localhost:5001/task?assignedTo=${userId}`
-        // );
-        const createdRes = await axios.get(
-          `http://localhost:5001/task?createdBy=${userId}&projectId=${projectId}`
-        );
-        const assignedRes = await axios.get(
-          `http://localhost:5001/task?assignedTo=${userId}&projectId=${projectId}`
-        );
+    // const fetchTasks = async () => {
+    //   try {
+    //     // const createdRes = await axios.get(
+    //     //   `http://localhost:5001/task?createdBy=${userId}`
+    //     // );
+    //     // const assignedRes = await axios.get(
+    //     //   `http://localhost:5001/task?assignedTo=${userId}`
+    //     // );
+    //     const createdRes = await axios.get(
+    //       `http://localhost:5001/task?createdBy=${userId}&projectId=${projectId}`
+    //     );
+    //     const assignedRes = await axios.get(
+    //       `http://localhost:5001/task?assignedTo=${userId}&projectId=${projectId}`
+    //     );
 
-        const createdTasks = createdRes.data;
-        const assignedTasks = assignedRes.data.filter(
-          (task) => task.createdBy !== parseInt(userId)
-        ); // avoid duplication
+    //     const createdTasks = createdRes.data;
+    //     const assignedTasks = assignedRes.data.filter(
+    //       (task) => task.createdBy !== parseInt(userId)
+    //     ); // avoid duplication
 
-        const allTasks = [...createdTasks, ...assignedTasks];
+    //     const allTasks = [...createdTasks, ...assignedTasks];
 
-        const grouped = {
-          todo: [],
-          inProgress: [],
-          done: [],
-        };
+    //     const grouped = {
+    //       todo: [],
+    //       inProgress: [],
+    //       done: [],
+    //     };
 
-        allTasks.forEach((task) => {
-          if (grouped[task.status]) {
-            grouped[task.status].push(task);
-          }
-        });
+    //     allTasks.forEach((task) => {
+    //       if (grouped[task.status]) {
+    //         grouped[task.status].push(task);
+    //       }
+    //     });
 
-        setData({
-          columns: {
-            todo: { ...initialData.columns.todo, tasks: grouped.todo },
-            inProgress: {
-              ...initialData.columns.inProgress,
-              tasks: grouped.inProgress,
-            },
-            done: { ...initialData.columns.done, tasks: grouped.done },
-          },
-        });
-      } catch (error) {
-        console.error("Failed to fetch tasks:", error);
-      }
-    };
+    //     setData({
+    //       columns: {
+    //         todo: { ...initialData.columns.todo, tasks: grouped.todo },
+    //         inProgress: {
+    //           ...initialData.columns.inProgress,
+    //           tasks: grouped.inProgress,
+    //         },
+    //         done: { ...initialData.columns.done, tasks: grouped.done },
+    //       },
+    //     });
+    //   } catch (error) {
+    //     console.error("Failed to fetch tasks:", error);
+    //   }
+    // };
+
+
+//     const fetchTasks = async () => {
+//   try {
+//     const userId = localStorage.getItem("userId");
+
+//     // Fetch tasks created by the user with or without projectId
+//     const createdRes = await axios.get(
+//       `http://localhost:5001/task?createdBy=${userId}&projectId=${projectId || ''}`
+//     );
+
+//     // Fetch tasks assigned to the user
+//     const assignedRes = await axios.get(
+//       `http://localhost:5001/task?assignedTo=${userId}&projectId=${projectId || ''}`
+//     );
+
+//     const createdTasks = createdRes.data;
+//     const assignedTasks = assignedRes.data.filter(
+//       (task) => task.createdBy !== parseInt(userId)
+//     );
+
+//     const allTasks = [...createdTasks, ...assignedTasks];
+
+//     const grouped = {
+//       todo: [],
+//       inProgress: [],
+//       done: [],
+//     };
+
+//     // Group tasks based on status
+//     allTasks.forEach((task) => {
+//       if (grouped[task.status]) {
+//         grouped[task.status].push(task);
+//       }
+//     });
+
+//     // Update state with tasks, including those with no projectId
+//     setData({
+//       columns: {
+//         todo: { ...initialData.columns.todo, tasks: grouped.todo },
+//         inProgress: { ...initialData.columns.inProgress, tasks: grouped.inProgress },
+//         done: { ...initialData.columns.done, tasks: grouped.done },
+//       },
+//     });
+//   } catch (error) {
+//     console.error("Failed to fetch tasks:", error);
+//   }
+// };
+
+
+const fetchTasks = async () => {
+  try {
+    const userId = localStorage.getItem("userId");
+
+    let projectQuery = projectId || ''; // If projectId is null or undefined, use an empty string
+
+    // Fetch tasks where createdBy and assignedTo are the same when projectId is null
+    if (!projectQuery) {
+      const createdRes = await axios.get(
+        `http://localhost:5001/task?createdBy=${userId}&assignedTo=${userId}&projectId=null`
+      );
+      const assignedRes = await axios.get(
+        `http://localhost:5001/task?createdBy=${userId}&assignedTo=${userId}&projectId=null`
+      );
+
+      const createdTasks = createdRes.data;
+      const assignedTasks = assignedRes.data.filter(
+        (task) => task.createdBy !== parseInt(userId)
+      );
+
+      const allTasks = [...createdTasks, ...assignedTasks];
+
+      const grouped = {
+        todo: [],
+        inProgress: [],
+        done: [],
+      };
+
+      // Group tasks based on their status
+      allTasks.forEach((task) => {
+        if (grouped[task.status]) {
+          grouped[task.status].push(task);
+        }
+      });
+
+      // Update state with grouped tasks
+      setData({
+        columns: {
+          todo: { ...initialData.columns.todo, tasks: grouped.todo },
+          inProgress: { ...initialData.columns.inProgress, tasks: grouped.inProgress },
+          done: { ...initialData.columns.done, tasks: grouped.done },
+        },
+      });
+    } else {
+      // Fetch tasks for a specific projectId
+      const createdRes = await axios.get(
+        `http://localhost:5001/task?createdBy=${userId}&projectId=${projectQuery}`
+      );
+      const assignedRes = await axios.get(
+        `http://localhost:5001/task?assignedTo=${userId}&projectId=${projectQuery}`
+      );
+
+      const createdTasks = createdRes.data;
+      const assignedTasks = assignedRes.data.filter(
+        (task) => task.createdBy !== parseInt(userId)
+      );
+
+      const allTasks = [...createdTasks, ...assignedTasks];
+
+      const grouped = {
+        todo: [],
+        inProgress: [],
+        done: [],
+      };
+
+      // Group tasks based on their status
+      allTasks.forEach((task) => {
+        if (grouped[task.status]) {
+          grouped[task.status].push(task);
+        }
+      });
+
+      // Update state with grouped tasks
+      setData({
+        columns: {
+          todo: { ...initialData.columns.todo, tasks: grouped.todo },
+          inProgress: { ...initialData.columns.inProgress, tasks: grouped.inProgress },
+          done: { ...initialData.columns.done, tasks: grouped.done },
+        },
+      });
+    }
+  } catch (error) {
+    console.error("Failed to fetch tasks:", error);
+  }
+};
+
+
 
     const fetchUsers = async () => {
       try {
@@ -553,8 +690,14 @@ export default function KanbanBoard() {
     if (!newTask.title) return;
     // if (!newTask.title || !assignedTo) return;
     const createdBy = parseInt(localStorage.getItem("userId")); // set this after login
-    // const assignedUsers=localStorage.setItem("assignedUsers",assignedTo)
-    const projectId = window.location.pathname.split("/").pop(); // Assuming route: /projects/kanban/:projectId
+    // const projectId = window.location.pathname.split("/").pop(); // Assuming route: /projects/kanban/:projectId
+    const path = window.location.pathname;
+
+    // Check if the current URL matches `/projects/kanban/:projectId`
+    const projectId = /\/projects\/kanban\/(\d+)/.test(path)
+      ? path.split("/").pop() // Extract the projectId from the URL
+      : null; // If the route doesn't match, set projectId to null
+    console.log("projectId", projectId);
 
     const taskData = {
       title: newTask.title,
@@ -565,7 +708,7 @@ export default function KanbanBoard() {
       status: "todo", // always starts in "todo"
       createdBy,
       assignedTo,
-      ...(projectId ? { projectId }:{}), // ✅ only include if exists,
+      ...(projectId ? { projectId } : {}), // ✅ only include if exists,
     };
 
     try {
