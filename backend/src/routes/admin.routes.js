@@ -31,12 +31,41 @@ router.post("/create", verifyToken, checkRole(1), async (req, res) => {
   }
 });
 
+// router.get("/users", verifyToken, checkRole(1), async (req, res) => {
+//   try {
+//     const users = await Register.findAll({
+//       attributes: ["id", "name", "emailId", "role", "active"],
+//     });
+//     res.status(200).json(users);
+//   } catch (err) {
+//     res.status(500).json({ error: err.message });
+//   }
+// });
+
+
 router.get("/users", verifyToken, checkRole(1), async (req, res) => {
   try {
+    const { page = 1, limit = 10 } = req.query;
+
+    const pageNumber = parseInt(page, 10) || 1;
+    const limitNumber = parseInt(limit, 10) || 10;
+    const offset = (pageNumber - 1) * limitNumber;
+
+    // Fetch users with pagination logic
     const users = await Register.findAll({
       attributes: ["id", "name", "emailId", "role", "active"],
+      limit: limitNumber, // Limit the number of users per page
+      offset: offset,     // Skip users based on the current page
     });
-    res.status(200).json(users);
+
+    // Count the total number of users (for pagination total count)
+    const totalUsers = await Register.count();
+
+    // Send the paginated data and total user count in the response
+    res.status(200).json({
+      users,
+      totalRecords: totalUsers,
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

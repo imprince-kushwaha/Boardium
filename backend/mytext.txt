@@ -162,3 +162,129 @@ const createAdmin = async (req, res) => {
 
   res.status(201).json({ message: `${role} created`, user: newAdmin });
 };
+
+
+
+
+See this is what I got confused when writing migartions it craetes table columns then what is use of writing same code to models?
+Answer is in Migartion it creates only table and using seed can push data but with the help of models we can interact with it as mentioned below
+
+And one more thing as in model if we do not use freezeTableName:true then it pluralizes our table name but not necessary to use same this plural name 
+in migration model name can use with or without 's' too but as for good practice use plural name so it matches with model but  not necessary...
+
+Whenever we migrate any file, the file name get logged to SequelizeMeta(we can rename it too) and when undo migrate it get remove from SequelizeMeta so that's how
+it works and find miagrate
+
+
+| **You Have...**                         | **Result**                                                                   |
+| --------------------------------------- | ---------------------------------------------------------------------------- |
+| ✅ Migrations, ❌ Models                  | DB tables created, but no way to use them in your app unless you use raw SQL |
+| ✅ Models, ❌ Migrations + `sync()`       | Sequelize creates tables automatically (not recommended for production)      |
+| ✅ Migrations + ✅ Models (best practice) | Tables are created via migration, and models help query/update them in code  |
+
+
+
+
+
+
+
+
+
+
+
+
+
+'use strict';
+
+const { DataTypes } = require('sequelize');
+
+/** @type {import('sequelize-cli').Migration} */
+module.exports = {
+  async up (queryInterface, Sequelize) {
+    /**
+     * Add altering commands here.
+     *
+     * Example:
+     * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
+     */
+
+    await queryInterface.createTable("Register", {
+      name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      emailId: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true,
+        validate: {
+          isEmail: true,
+        },
+      },
+      password: {
+        type: DataTypes.STRING,
+        allowNull: false,
+      },
+      role: {
+        type: DataTypes.INTEGER,
+        defaultValue: 3,
+        comment: "1 = Superadmin, 2 = Admin, 3 = User",
+      },
+      active: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true,
+      },
+       createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+      updatedAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+      },
+    });
+  },
+
+//   async down(queryInterface, Sequelize) {
+//      /**
+//      * Add reverting commands here.
+//      *
+//      * Example:
+//      * await queryInterface.dropTable('users');
+//      */
+//   const tableNames = await queryInterface.showAllTables();
+
+//   if (tableNames.includes('Registers')) {
+//     await queryInterface.dropTable('Register');
+//   } else {
+//     console.warn("Table 'Register' does not exist. Skipping drop.");
+//   }
+// }
+async down(queryInterface, Sequelize) {
+  const tableNames = await queryInterface.showAllTables();
+  const targetTable = 'Register';
+
+  if (!tableNames.includes(targetTable)) {
+    // Stop revert and keep migration in SequelizeMeta
+    throw new Error(`⛔ Cannot revert migration: table '${targetTable}' does not exist.`);
+  }
+
+  // Safe to drop
+  await queryInterface.dropTable(targetTable);
+}
+
+
+};
+
+
+
+async up(queryInterface, Sequelize) {
+    const tableName = 'category';
+    const tableExists = await queryInterface.describeTable(tableName).then(() => true).catch(() => false);
+    if (!tableExists) {
+      ////do you code here
+    }  
+    else{
+      //log your message
+    } 
+  }
