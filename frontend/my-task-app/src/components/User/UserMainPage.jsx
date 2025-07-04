@@ -11,7 +11,7 @@ const UserMainPage = () => {
     <>
       <CommonLayout>
         <div className="">
-          <div>Welcome back {UserName} 👋</div>
+          <div className="text-2xl font-semibold text-[#00B4D8]">Welcome back {UserName} 👋</div>
           <KanbanBoard />
         </div>
       </CommonLayout>
