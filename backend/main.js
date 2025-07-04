@@ -1,15 +1,17 @@
-const express=require('express')
-var cors=require('cors');
-const sequelize = require('./src/db/database');
-require('dotenv').config();
+const express = require("express");
+var cors = require("cors");
+const sequelize = require("./src/db/database");
+require("dotenv").config();
 
-const app=express();
+const app = express();
 app.use(express.json());
 app.use(cors());
-require('./index')(app)
+require("./index")(app);
 
 // app.listen(5000, () => console.log('Server running on http://localhost:5000'));
-sequelize.sync({ force: false })  // Use { alter: true } in dev
+sequelize.authenticate() // Use { alter: true } in dev
+  //  sync({ force: false }) will create on basis of models we described
+  // .authenticate() if wanna use migration based
   .then(() => {
     console.log("Database Connected & Synced...");
     app.listen(process.env.PORT, () => {
