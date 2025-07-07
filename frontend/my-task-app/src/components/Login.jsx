@@ -27,6 +27,7 @@ const Login = () => {
       localStorage.setItem("role", data.user.role);
       localStorage.setItem("username", data.user.name);
       navigate("/home");
+      toast.success("Logged In Successfully", { autoClose: 3000 });
     } catch (err) {
       if (err.response?.status === 401) {
         toast.error("Login failed! Invalid credentials.");
@@ -75,9 +76,10 @@ const Login = () => {
           {/* Submit Button */}
           <Button
             label="Login"
-            severity="success"
+            // severity="success"
             className="w-full"
             type="submit"
+            style={{backgroundColor:'#1E2A47'}}
           />
         </form>
 

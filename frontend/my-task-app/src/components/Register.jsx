@@ -5,6 +5,7 @@ import { Button } from "primereact/button";
 import { FloatLabel } from "primereact/floatlabel";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Register = () => {
   const [username, setUsername] = useState("");
@@ -14,16 +15,25 @@ const Register = () => {
 
   const handleRegister = async (e) => {
     e.preventDefault();
+    const passwordRegex =/^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      toast.error(
+        "Password must be at least 8 characters long, contain a number, and a special character.",
+        { autoClose: 3000 }
+      );
+      return;
+    }
     try {
       const { data } = await axios.post("http://localhost:5001/register", {
         name: username,
         emailId: email,
         password: password,
       });
-      console.log(data, "data2");
+      toast.success("Registered Successfully", { autoClose: 3000 });
       navigate("/login");
     } catch (err) {
       console.error("Registration failed:", err.response?.data || err.message);
+      toast.error("Could not Register", { autoClose: 3000 });
       navigate("/register");
     }
   };
@@ -78,9 +88,10 @@ const Register = () => {
           {/* Submit Button */}
           <Button
             label="Register"
-            severity="success"
+            // severity="success"
             className="w-full"
             type="submit"
+            style={{ backgroundColor: "#1E2A47" }}
           />
         </form>
 
