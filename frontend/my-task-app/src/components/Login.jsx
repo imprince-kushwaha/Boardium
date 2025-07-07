@@ -100,32 +100,3 @@ const Login = () => {
 };
 
 export default Login;
-
-// import React, { useState } from "react";
-// import Login from "./Login";
-// import Register from "./Register";
-
-// const AuthWrapper = () => {
-//   const [isLogin, setIsLogin] = useState(true);
-
-//   return (
-//     <div className="min-h-screen flex items-center justify-center bg-gray-100">
-//       {isLogin ? (
-//         <Login switchToRegister={() => setIsLogin(false)} />
-//       ) : (
-//         <Register switchToLogin={() => setIsLogin(true)} />
-//       )}
-//     </div>
-//   );
-// };
-
-// export default AuthWrapper;
-
-// import React from "react";
-// import AuthWrapper from "./components/AuthWrapper";
-
-// function App() {
-//   return <AuthWrapper />;
-// }
-
-// export default App;

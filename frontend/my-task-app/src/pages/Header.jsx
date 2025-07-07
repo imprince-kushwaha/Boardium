@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
+import { toast } from "react-toastify";
 
 const Header = () => {
   const menu = useRef(null);
@@ -26,6 +27,7 @@ const Header = () => {
       className: "logout-item",
       command: () => {
         localStorage.clear();
+        toast.success("Logged Out Successfully", { autoClose: 3000 })
         navigate("/login");
       },
     },
