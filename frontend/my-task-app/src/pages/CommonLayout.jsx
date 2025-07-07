@@ -20,7 +20,10 @@ const CommonLayout = ({ children }) => {
 
         {/* Scrollable content area between header and footer */}
         <main className="flex-1 pt-12 bg-gray-50 px-4 mt-10">
+          <div className="h-[800px]">
+
           {children}
+          </div>
         </main>
 
         {/* Footer fixed at bottom */}
