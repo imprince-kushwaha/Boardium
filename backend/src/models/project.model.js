@@ -53,6 +53,12 @@ const sequelize = require("../db/database");
 const Project = sequelize.define(
   "Project",
   {
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true, // Use id as the primary key
+    },
     projectName: {
       type: DataTypes.STRING,
       allowNull: false,

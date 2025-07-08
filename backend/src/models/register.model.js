@@ -5,6 +5,12 @@ const Register = sequelize.define(
   "Register",
   {
     // Model attributes here;
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true, // Use id as the primary key
+    },
     name: {
       type: DataTypes.STRING,
       allowNull: false,

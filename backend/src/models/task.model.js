@@ -51,6 +51,12 @@ const Project = require("./project.model.js");
 const Task = sequelize.define(
   "Task",
   {
+    id: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true, // Use id as the primary key
+    },
     title: {
       type: DataTypes.STRING,
       allowNull: false,
