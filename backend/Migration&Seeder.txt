@@ -1,0 +1,42 @@
+migration operations
+
+Table Definition: createTable, dropTable, describeTable
+Column Changes: addColumn, removeColumn, renameColumn, changeColumn
+Constraints: addConstraint, removeConstraint, addUniqueConstraint, removeUniqueConstraint, addCheckConstraint, removeCheckConstraint, addPrimaryKey, removePrimaryKey
+Indexes: addIndex, removeIndex, removeIndexByName
+Data Operations: bulkInsert, bulkUpdate, bulkDelete, truncateTable
+Advanced Operations: alterTable, addEnum, removeEnum
+
+
+
+
+'use strict';
+
+module.exports = {
+  up: async (queryInterface, Sequelize) => {
+    // Add sample projects
+    await queryInterface.bulkInsert('Projects', [
+      {
+        projectName: 'Project 1',
+        projectPriority: 1,
+        projectCreatedDate: '2025-07-01',
+        projectCreatedBy: 1, // Assuming Register ID 1 exists
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+      {
+        projectName: 'Project 2',
+        projectPriority: 2,
+        projectCreatedDate: '2025-07-05',
+        projectCreatedBy: 2, // Assuming Register ID 2 exists
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      },
+    ]);
+  },
+
+  down: async (queryInterface, Sequelize) => {
+    // Remove all data from Projects table
+    await queryInterface.bulkDelete('Projects', null, {});
+  }
+};

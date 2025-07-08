@@ -12,7 +12,13 @@ module.exports = {
      * await queryInterface.createTable('users', { id: Sequelize.INTEGER });
      */
 
-    await queryInterface.createTable("Register", {
+    await queryInterface.createTable("Registers", {
+      id: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        autoIncrement: true,
+        primaryKey: true, // Use id as the primary key
+      },
       name: {
         type: DataTypes.STRING,
         allowNull: false,
@@ -49,13 +55,22 @@ module.exports = {
     });
   },
 
+  //   async down(queryInterface, Sequelize) {
+  //      /**
+  //      * Add reverting commands here.
+  //      *
+  //      * Example:
+  //      * await queryInterface.dropTable('users');
+  //      */
+
+  //   const tableNames = await queryInterface.showAllTables();
+  //   if (tableNames.includes('Registers')) {
+  //     await queryInterface.dropTable('Register');
+  //   } else {
+  //     console.warn("Table 'Register' does not exist. Skipping drop.");
+  //   }
+  // }
   async down(queryInterface, Sequelize) {
-    /**
-     * Add reverting commands here.
-     *
-     * Example:
-     * await queryInterface.dropTable('users');
-     */
     const tableNames = await queryInterface.showAllTables();
     const targetTable = "Registers";
 
@@ -66,7 +81,6 @@ module.exports = {
       );
     }
 
-    // Safe to drop
     await queryInterface.dropTable(targetTable);
   },
 };
